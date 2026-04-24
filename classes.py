@@ -29,6 +29,16 @@ class Point(Drawable):
             return Point(self.x - other.x, self.y - other.y)
         return NotImplemented
     
+    def __div__(self, scalar):
+        if isinstance(scalar, (int, float)):
+            return Point(self.x / scalar, self.y / scalar)
+        return NotImplemented
+    
+    def __mul__(self, scalar):
+        if isinstance(scalar, (int, float)):
+            return Point(self.x * scalar, self.y * scalar)
+        return NotImplemented
+    
     def __le__(self, other):
         if isinstance(other, Point):
             return self.x <= other.x and self.y <= other.y
@@ -39,8 +49,36 @@ class Point(Drawable):
             return self.x >= other.x and self.y >= other.y
         return NotImplemented
     
+    def __lt__(self, other):
+        if isinstance(other, Point):
+            return self.x < other.x and self.y < other.y
+        return NotImplemented
+    
+    def __gt__(self, other):
+        if isinstance(other, Point):
+            return self.x > other.x and self.y > other.y
+        return NotImplemented
+
     def draw(self, renderer):
         renderer.draw_point(self.x, self.y)
+
+class Vector(Point):
+    def __init__(self, p1, p2):
+        if isinstance(p1, Point) and isinstance(p2, Point):
+            super().__init__(p2.x - p1.x, p2.y - p1.y)
+        else:
+            super().__init__(p1, p2)
+
+    def __str__(self):
+        return f"<{self.x}, {self.y}>"
+    
+    def __repr__(self):
+        return f"Vector({self.x}, {self.y})"
+    
+    def __mul__(self, other):
+        if isinstance(other, Vector):
+            return self.x * other.x + self.y * other.y
+        return NotImplemented
 
 class Line(Drawable):
     def __init__(self, start: Point, end: Point):
@@ -55,6 +93,9 @@ class Line(Drawable):
         renderer.draw_line(self.start.x, self.start.y, self.end.x, self.end.y)
         
     def __len__(self):
+        return self.get_length()
+    
+    def get_length(self):
         return math.sqrt((self.end.x - self.start.x) ** 2 + (self.end.y - self.start.y) ** 2)
     
     def __add__(self, other):
@@ -94,6 +135,21 @@ class Line(Drawable):
         x1, y1 = self.start.x, self.start.y
         x2, y2 = self.end.x, self.end.y
         return ((x2- x1) * (y - y1) - (y2 - y1) * (x - x1))
+    
+    def project_point(self, p: Point):
+        x1, y1 = self.start.x, self.start.y
+        x2, y2 = self.end.x, self.end.y
+        dx = x2 - x1
+        dy = y2 - y1
+        denom = dx * dx + dy * dy
+        if denom == 0:
+            return Point(x1, y1)
+        t = ((p.x - x1) * dx + (p.y - y1) * dy) / denom
+        if t <= 0:
+            return Point(x1, y1)
+        if t >= 1:
+            return Point(x2, y2)
+        return Point(x1 + dx * t, y1 + dy * t)
 
     
 class Polygon(Drawable):
@@ -123,6 +179,26 @@ class Polygon(Drawable):
     
     def add_vertex(self, point):
         self.vertices.append(point)
+
+    def get_normals(self):
+        n = len(self.vertices)
+        if n < 2:
+            return []
+        area = 0
+        for i in range(n):
+            p = self.vertices[i]
+            q = self.vertices[(i + 1) % n]
+            area += p.x * q.y - q.x * p.y
+        ccw = area > 0
+        normals = []
+        for edge in self.edges():
+            dx = edge.end.x - edge.start.x
+            dy = edge.end.y - edge.start.y
+            if ccw:
+                normals.append(Vector(-dy, dx))
+            else:
+                normals.append(Vector(dy, -dx))
+        return normals
 
 class Angle(Drawable):
     def __init__(self, vertex: Point, p1: Point, p2: Point):
@@ -240,3 +316,31 @@ class CheckContainingMethods:
         for func in dolater:
             func()
         return verdict
+    
+    def closest_point_on_boundary(polygon: Polygon, point: Point, world: World) -> Point:
+        closest_point = None
+        min_distance, min_index = float('inf'), -1
+        for i, edge in enumerate(polygon.edges()):
+            proj = edge.project_point(point)
+            dist = Line(point, proj).get_length()
+            if dist < min_distance:
+                min_distance = dist
+                closest_point = proj
+                min_index = i
+        world.tmp_draw_line(point.x, point.y, closest_point.x, closest_point.y, color=(255, 255, 100), width=3)
+        world.tmp_draw_point(closest_point.x, closest_point.y, color=(255, 255, 100))
+        norms = polygon.get_normals()
+        e = polygon.edges()[min_index]
+        if closest_point.x == e.start.x and closest_point.y == e.start.y:
+            n = (norms[(min_index - 1) % len(norms)] + norms[min_index]) * 0.5
+        elif closest_point.x == e.end.x and closest_point.y == e.end.y:
+            n = (norms[min_index] + norms[(min_index + 1) % len(norms)]) * 0.5
+        else:
+            n = norms[min_index]
+        world.tmp_draw_line(polygon.vertices[min_index].x, polygon.vertices[min_index].y,
+                            polygon.vertices[min_index].x + n.x, polygon.vertices[min_index].y + n.y, color=(255, 0, 0), width=3)
+        q = Vector(closest_point, point)
+        d = Vector(n.x, n.y) * q
+        pgw = world.renderer
+        pgw.textRB = [f"{'Inside' if d > 0 else 'Outside'}", f"{d:.2f}", f"q: ({q.x:.2f}, {q.y:.2f})", f"n: ({n.x:.2f}, {n.y:.2f})", f"Closest Point: ({closest_point.x:.2f}, {closest_point.y:.2f})", f"Distance: {min_distance:.2f}", "[Closest Point on Boundary]"]
+        return d > 0

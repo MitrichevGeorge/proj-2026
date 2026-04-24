@@ -22,7 +22,7 @@ def main():
 
     ntt = 0
     tp = 0
-    tpc = 3
+    tpc = 4
 
     while True:
         renderer.start_update()
@@ -41,6 +41,8 @@ def main():
             CheckContainingMethods.sum_of_angles(obj[sel], point, world)
         elif tp == 2:
             CheckContainingMethods.half_plane_method(obj[sel], point, world)
+        elif tp == 3:
+            CheckContainingMethods.closest_point_on_boundary(obj[sel], point, world)
 
     pg.quit()
 

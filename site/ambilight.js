@@ -1,42 +1,29 @@
-function bezier(p0, p1, p2, p3, t) {
-    const cX = 3 * (p1.x - p0.x);
-    const bX = 3 * (p2.x - p1.x) - cX;
-    const aX = p3.x - p0.x - cX - bX;
+function createInfinityMover(el) {
+    const centerX = innerWidth / 2;
+    const centerY = innerHeight / 2;
 
-    const cY = 3 * (p1.y - p0.y);
-    const bY = 3 * (p2.y - p1.y) - cY;
-    const aY = p3.y - p0.y - cY - bY;
+    let t = Math.random() * Math.PI * 2;
 
-    return {
-        x: aX * t * t * t + bX * t * t + cX * t + p0.x,
-        y: aY * t * t * t + bY * t * t + cY * t + p0.y
-    };
-}
+    // случайная амплитуда и скорость
+    let amp = 150 + Math.random() * 120;
+    let speed = 0.005 + Math.random() * 0.004;
 
-function createBezierMover(el, duration = 6000) {
-    let t = 0;
-    let p0 = { x: innerWidth / 2, y: innerHeight / 2 };
-    let p1, p2, p3;
-
-    function newCurve() {
-        p1 = { x: Math.random() * innerWidth, y: Math.random() * innerHeight };
-        p2 = { x: Math.random() * innerWidth, y: Math.random() * innerHeight };
-        p3 = { x: Math.random() * innerWidth, y: Math.random() * innerHeight };
-        t = 0;
-    }
-
-    newCurve();
+    // лёгкое смещение центра
+    let offsetX = (Math.random() - 0.5) * 120;
+    let offsetY = (Math.random() - 0.5) * 80;
 
     function animate() {
-        t += 1 / (duration / 16.6); // нормализуем под 60fps
+        t += speed;
 
-        if (t >= 1) {
-            p0 = p3;
-            newCurve();
-        }
+        // формула горизонтальной восьмёрки
+        const denom = 1 + Math.sin(t) ** 2;
 
-        const pos = bezier(p0, p1, p2, p3, t);
-        el.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+        const x = amp * Math.cos(t) / denom;
+        const y = amp * Math.sin(t) * Math.cos(t) / denom;
+        console.log(x, y);
+
+        el.style.transform =
+            `translate3d(${centerX + x + offsetX}px, ${centerY + y + offsetY}px, 0)`;
 
         requestAnimationFrame(animate);
     }
@@ -44,4 +31,4 @@ function createBezierMover(el, duration = 6000) {
     animate();
 }
 
-createBezierMover(document.getElementById("ambiglow-1"), 9000);
+createInfinityMover(document.getElementById("ambiglow-1"));
