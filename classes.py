@@ -93,7 +93,7 @@ class Line(Drawable):
         x, y = p.x, p.y
         x1, y1 = self.start.x, self.start.y
         x2, y2 = self.end.x, self.end.y
-        return ((x2- x1) * (y - y1) - (y2 - y1) * (x - x1)) > 0
+        return ((x2- x1) * (y - y1) - (y2 - y1) * (x - x1))
 
     
 class Polygon(Drawable):
@@ -219,4 +219,24 @@ class CheckContainingMethods:
         verdict = abs(total_angle) > 1e-5
         pgw = world.renderer
         pgw.textRB = [f"{'Inside' if verdict else 'Outside'}", f"Total Angle: {total_angle:.2f}", "[Sum of Angles]"]
+        if verdict:
+            world.tmp_draw_polygon([(v.x, v.y) for v in polygon.vertices], fill_color=(168, 120, 86, 80))
+        return verdict
+    
+    def half_plane_method(polygon: Polygon, point: Point, world: World) -> bool:
+        world.tmp_draw_polygon([(v.x, v.y) for v in polygon.vertices], fill_color=(48, 38, 28))
+        pgw = world.renderer
+        verdict = True
+        dolater = []
+        for edge in polygon.edges():
+            if edge.get_pp(point) <= 0:
+                verdict = False
+                dolater.append(lambda e=edge: world.tmp_draw_line(e.start.x, e.start.y, e.end.x, e.end.y, color=(255, 100, 100), width=3))
+            else:
+                dolater.append(lambda e=edge: world.tmp_draw_line(e.start.x, e.start.y, e.end.x, e.end.y, color=(100, 255, 100), width=3))
+        pgw.textRB = [f"{'Inside' if verdict else 'Outside'}", "[Half-Plane Method]"]
+        if verdict:
+            world.tmp_draw_polygon([(v.x, v.y) for v in polygon.vertices], fill_color=(168, 120, 86, 80))
+        for func in dolater:
+            func()
         return verdict

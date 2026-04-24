@@ -22,7 +22,7 @@ def main():
 
     ntt = 0
     tp = 0
-    tpc = 2
+    tpc = 3
 
     while True:
         renderer.start_update()
@@ -39,6 +39,8 @@ def main():
             CheckContainingMethods.even_odd_rule(obj[sel], point, world, ntt)
         elif tp == 1:
             CheckContainingMethods.sum_of_angles(obj[sel], point, world)
+        elif tp == 2:
+            CheckContainingMethods.half_plane_method(obj[sel], point, world)
 
     pg.quit()
 
