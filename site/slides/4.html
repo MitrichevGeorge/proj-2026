@@ -1,0 +1,21 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+<div style="font-family: 'Montserrat', sans-serif; text-align: center;">
+    <h1 style="font-size: 1.8em; margin: 0 0 20px;">Метод суммы углов</h1>
+
+    <p style="font-size: 0.8em; line-height: 1.4;">
+        Идея: суммировать углы между векторами от точки к вершинам многоугольника.
+        Если сумма ≈ <b>2π</b> — точка внутри.<br>
+        Если ≈ <b>0</b> — снаружи.
+    </p>
+
+    <pre style="font-family: 'Courier New', monospace; font-size: 0.7em; text-align: left; margin: 20px auto; width: 80%;">
+θ = Σ angle( Pi - P , P(i+1) - P )
+inside = |θ| > π
+    </pre>
+
+    <p style="font-size: 0.8em;"><b>Плюсы:</b> работает для любых форм, включая самопересекающиеся.</p>
+    <p style="font-size: 0.8em;"><b>Минусы:</b> медленнее; требует вычисления арктангенсов.</p>
+</div>

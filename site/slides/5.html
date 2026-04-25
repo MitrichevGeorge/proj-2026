@@ -1,0 +1,20 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+<div style="font-family: 'Montserrat', sans-serif; text-align: center;">
+    <h1 style="font-size: 1.8em; margin: 0 0 20px;">Метод Winding Number</h1>
+
+    <p style="font-size: 0.8em; line-height: 1.4;">
+        Идея: считать, сколько раз многоугольник «обходит» точку.
+        Если число обходов ≠ 0 — точка внутри.
+    </p>
+
+    <pre style="font-family: 'Courier New', monospace; font-size: 0.7em; text-align: left; margin: 20px auto; width: 80%;">
+WN = Σ sign(orientation(P, Pi, P(i+1))) * angle(...)
+inside = (WN != 0)
+    </pre>
+
+    <p style="font-size: 0.8em;"><b>Плюсы:</b> корректен для самопересекающихся многоугольников.</p>
+    <p style="font-size: 0.8em;"><b>Минусы:</b> сложнее реализации, чем even‑odd.</p>
+</div>

@@ -1,0 +1,19 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+<div style="font-family: 'Montserrat', sans-serif; text-align: center;">
+    <h1 style="font-size: 1.8em; margin: 0 0 20px;">Метод ближайшей нормали</h1>
+
+    <p style="font-size: 0.8em; line-height: 1.4;">
+        Идея: найти ближайшее ребро и проверить знак скалярного произведения точки с его нормалью.
+    </p>
+
+    <pre style="font-family: 'Courier New', monospace; font-size: 0.7em; text-align: left; margin: 20px auto; width: 80%;">
+n = normal(Pi, P(i+1))
+inside = dot(P - Pi, n) ≤ 0
+    </pre>
+
+    <p style="font-size: 0.8em;"><b>Плюсы:</b> быстрый, подходит для выпуклых фигур.</p>
+    <p style="font-size: 0.8em;"><b>Минусы:</b> не работает для невыпуклых; чувствителен к ориентации нормалей.</p>
+</div>

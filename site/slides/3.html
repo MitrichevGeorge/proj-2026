@@ -1,0 +1,21 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+<div style="font-family: 'Montserrat', sans-serif; text-align: center;">
+    <h1 style="font-size: 1.8em; margin: 0 0 20px;">Метод чёт‑нечёт (Even‑Odd Rule)</h1>
+
+    <p style="font-size: 0.8em; line-height: 1.4;">
+        Идея: провести луч из точки и посчитать число пересечений с многоугольником.<br>
+        Если пересечений <b>нечётное</b> — точка внутри.<br>
+        Если <b>чётное</b> — снаружи.
+    </p>
+
+    <pre style="font-family: 'Courier New', monospace; font-size: 0.7em; text-align: left; margin: 20px auto; width: 80%;">
+Пересечения = Σ I(луч пересекает ребро)
+inside = (Пересечения mod 2 == 1)
+    </pre>
+
+    <p style="font-size: 0.8em;"><b>Плюсы:</b> простой, быстрый, легко реализуется.</p>
+    <p style="font-size: 0.8em;"><b>Минусы:</b> требует аккуратной обработки горизонтальных рёбер.</p>
+</div>
